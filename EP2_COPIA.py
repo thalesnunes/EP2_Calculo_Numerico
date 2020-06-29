@@ -12,7 +12,7 @@ import random
     Thales Arantes Kerche Nunes - 10769372'''
 
 
-def sol_aprox_u(delta_x, delta_t, N, M, u0, g1, g2, f):
+def sol_aprox_u(delta_x, delta_t, N, M, u0, g1, g2, f):   # Função do EP1
     
     ti, xi = vetores_ti_xi(delta_t, delta_x, M, N)
     
@@ -23,15 +23,13 @@ def sol_aprox_u(delta_x, delta_t, N, M, u0, g1, g2, f):
     u = implementa_g1_g2(u, delta_t, g1, g2)
 
     for k in range (M):
-        for i in range (1, N):       # equação que substitui os valores de U pelos calculados na fórmula
+        for i in range (1, N):
             u[k+1][i] = u[k][i] + delta_t*((u[k][i-1] - 2*u[k][i] + u[k][i+1])/(delta_x)**2 + f(ti[k], xi[i]))
-            # u[k+1][i] = u[k][i] + delta_t*((u[k][i-1] - 2*u[k][i] + u[k][i+1])/(delta_x)**2 /
-            #             + 10* (xi)**2 *(xi - 1) - 60*xi*tk + 20*tk)
-            # a fórmula acima foi a utilizada nas primeiras versões do EP1, foi utilizada para alguns testes
+
     return u
 
 
-def sol_exata_u(delta_x, delta_t, N, M, u0, g1, g2):
+def sol_exata_u(delta_x, delta_t, N, M, u0, g1, g2):   # Função do EP1
 
     ti, xi = vetores_ti_xi(delta_t, delta_x, M, N)
     
@@ -45,14 +43,12 @@ def sol_exata_u(delta_x, delta_t, N, M, u0, g1, g2):
         for i in range (N+1):  # calcula os valores da formula exata, e os coloca na matriz U exata
             if u0 == u0_a:
                 u[k][i] = (1 + math.sin(10*ti[k]))*(xi[i]**2)*(1 - xi[i])**2
-                # u[k][i] = (10)*(ti[k])*((xi[i])**2)*(xi[i]-1)
-                # a fórmula acima foi a utilizada nas primeiras versões do EP1, foi utilizada para alguns testes
             else:
                 u[k][i] = math.exp(ti[k] - xi[i]) * math.cos(5*ti[k]*xi[i])
     return u
 
 
-def err_u(u_exato, u_aprox, N):
+def err_u(u_exato, u_aprox, N):   # Função do EP1
     
     err_T = 0
 
@@ -64,7 +60,7 @@ def err_u(u_exato, u_aprox, N):
     return err_T
 
 
-def euler(delta_x, N, u0, g1, g2, f):
+def euler(delta_x, N, u0, g1, g2, f):   # Função do EP1
     
     ti, xi = vetores_ti_xi(delta_x, delta_x, N, N)
     
@@ -87,8 +83,8 @@ def euler(delta_x, N, u0, g1, g2, f):
     return u
 
 
-def crank(delta_x, N, u0, g1, g2, f):
-    
+def crank(delta_x, N, u0, g1, g2, f):   # Calcula a matriz U, para que possamos obter uk
+                                        # e resolver o problema inverso
     ti, xi = vetores_ti_xi(delta_x, delta_x, N, N)
     
     u = cria_u(N, N)
@@ -110,7 +106,7 @@ def crank(delta_x, N, u0, g1, g2, f):
     return u
 
 
-def vetores_ti_xi(delta_t, delta_x, M, N):
+def vetores_ti_xi(delta_t, delta_x, M, N):   # Função do EP1
     
     ti = []
     xi = []
@@ -124,7 +120,7 @@ def vetores_ti_xi(delta_t, delta_x, M, N):
     return ti, xi
 
 
-def cria_u(M, N):
+def cria_u(M, N):   # Função do EP1
     
     u = [0] *(M+1)
     for b in range (len(u)):
@@ -133,7 +129,7 @@ def cria_u(M, N):
     return u
 
 
-def implementa_u0(u, delta_x, u0):
+def implementa_u0(u, delta_x, u0):   # Função do EP1
     
     for a in range (1, len(u[0])):
         xh = a * delta_x
@@ -142,7 +138,7 @@ def implementa_u0(u, delta_x, u0):
     return u
 
 
-def implementa_g1_g2(u, delta_t, g1, g2):
+def implementa_g1_g2(u, delta_t, g1, g2):   # Função do EP1
     
     for y in range(len(u)):
         th = y * delta_t
@@ -152,7 +148,7 @@ def implementa_g1_g2(u, delta_t, g1, g2):
     return u
 
 
-def cria_A(diag, sub_diag):
+def cria_A(diag, sub_diag):   # Função do EP1
     
     A = [[diag]*(N)]
     A.append([sub_diag]*(N-1))
@@ -160,7 +156,7 @@ def cria_A(diag, sub_diag):
     return A
 
 
-def cria_b_euler(u, delta_t, f, lamb, g1, g2, ti, xi, k):
+def cria_b_euler(u, delta_t, f, lamb, g1, g2, ti, xi, k):   # Função do EP1
     
     b = []
     bi = u[k][1]+delta_t*(f(ti[k+1], xi[1])) + lamb*(g1(ti[k+1]))
@@ -174,7 +170,7 @@ def cria_b_euler(u, delta_t, f, lamb, g1, g2, ti, xi, k):
     return b
 
 
-def cria_b_crank(u, delta_t, f, lamb, g1, g2, ti, xi, k):
+def cria_b_crank(u, delta_t, f, lamb, g1, g2, ti, xi, k):   # Função do EP1 (necessária para calcular Crank-Nicolson no EP2)
     
     b = []
     bi = u[k][1]+delta_t/2*(f(ti[k+1], xi[1]) + f(ti[k], xi[1])) + lamb/2*(g1(ti[k+1])) \
@@ -190,7 +186,7 @@ def cria_b_crank(u, delta_t, f, lamb, g1, g2, ti, xi, k):
     return b
 
 
-def completa_u_euler(u, delta_t, f, lamb, ti, xi, k, ux):
+def completa_u_euler(u, delta_t, f, lamb, ti, xi, k, ux):   # Função do EP1
     
     for r in range (1, N):
         if r == 1:
@@ -203,7 +199,7 @@ def completa_u_euler(u, delta_t, f, lamb, ti, xi, k, ux):
     return u
        
 
-def completa_u_crank(u, delta_t, f, lamb, ti, xi, k, ux):
+def completa_u_crank(u, delta_t, f, lamb, ti, xi, k, ux):   # Função do EP1 (necessária para calcular Crank-Nicolson no EP2)
     
     for r in range (1, N):
         if r == 1:
@@ -219,7 +215,7 @@ def completa_u_crank(u, delta_t, f, lamb, ti, xi, k, ux):
     return u
 
 
-def decompoe_A_vetor(A):
+def decompoe_A_vetor(A):   # Função do EP1
 
     D = [0] * len(A[0])
     L = [0] * len(A[1])   
@@ -232,7 +228,7 @@ def decompoe_A_vetor(A):
     return D, L
 
 
-def resolve_x_vetor(A, b):
+def resolve_x_vetor(A, b):   # Função do EP1
 
     D, L = decompoe_A_vetor(A)
     
@@ -254,55 +250,55 @@ def resolve_x_vetor(A, b):
     return x
 
 
-def escolhe_p(escolha):
-
-    if escolha == 'a': p_list, uT_c = [0.35], 0
-    elif escolha == 'b': p_list, uT_c = [0.15, 0.3, 0.7, 0.8], 0
+def escolhe_p(escolha):   # Como pedido no item 'a' essa função escolhe quais os valores de p
+                          # dependendo do teste que está sendo realizado
+    if escolha == 'a': p_list, uT_c = [0.35], 0                     # Simples, coloca a lista de p com valores do enunciado
+    elif escolha == 'b': p_list, uT_c = [0.15, 0.3, 0.7, 0.8], 0    # (uT_c só é utilizado para os testes 'c' e 'd')
     else:
-        with open ('teste.txt', 'r') as file:
-            text = file.readlines()
+        with open ('teste.txt', 'r') as file:                       # Para testes 'c' e 'd', o arquivo 'teste.txt' precisa
+            text = file.readlines()                                 # ser lido e transformado em uma matriz com floats
 
-        text = [num.strip(' \n') for num in text]
-        p_list = text.pop(0).split()
-        p_list = [float(p) for p in p_list]
-        text = text[::int(2048/N)]
-        text.pop(0)
-        text.pop()
-        uT_c = [float(value[:-5])/100 if 'E' in value else float(value) for value in text]
-        del text
-
+        text = [num.strip(' \n') for num in text]                   # retira os espaços em branco e quebra de linhas
+        p_list = text.pop(0).split()                                # pega a primeira linha, valores de p, do arquivo
+        p_list = [float(p) for p in p_list]                         # transforma esses valores em floats
+        text = text[::int(2048/N)]                                  # pega a quantidade de pontos dependendo de N
+        text.pop(0)                                                 # tira primeiro zero
+        text.pop()                                                  # tira último zero
+        uT_c = [float(value[:-5])/100 if 'E' in value else float(value) for value in text]   # vetor utilizado em 'c' e 'd'
+        del text             # deleta o arquivo que não será mais usado                      # transformando em floats
+                             # libera parte da RAM e melhora o desempenho
     return p_list, uT_c
 
 
-def prod_int(u, v):
+def prod_int(u, v):                                                 # Calcula o produto interno para dois vetores dados
     
     total = 0
     for i in range (len(u)):
-        z = u[i] * v[i]
+        z = u[i] * v[i]                                             # Faz a multiplicação dos valores de cada vetor
         total += z
     
     return total
 
 
-def monta_sistema_min_qua(dict_p_u, uT):
+def monta_sistema_min_qua(dict_p_u, uT):         # Monta o sistema pedido, com os produtos internos de cada vetor do teste
     
-    matriz_final = [[0] * len(dict_p_u) for n in range (len(dict_p_u))]
-    solucao = [0] * len(dict_p_u)
-    for i, u1 in enumerate(dict_p_u.values()):
-        for j, u2 in enumerate(dict_p_u.values()):
+    matriz_final = [[0] * len(dict_p_u) for n in range (len(dict_p_u))]   # Faz matriz de zeros para ser alterada
+    solucao = [0] * len(dict_p_u)                                         # Cria o vetor solução
+    for i, u1 in enumerate(dict_p_u.values()):                            # Itera todos os vetores de todos os 'p'
+        for j, u2 in enumerate(dict_p_u.values()):                        # Itera novamente para obter a matriz completa
             matriz_final[i][j] = prod_int(u1, u2)
         solucao[i] = prod_int(uT, u1)
 
-    return (matriz_final, solucao)
+    return matriz_final, solucao
 
-def decompoe_A_matriz(A):
+def decompoe_A_matriz(A):                                               # Faz a decomposição de uma matriz simétrica
     
-    D = [[0] * len(A[0]) for n in range (len(A))]
-    L = [[0] * len(A[0]) for n in range (len(A))]
-    for n in range (len(A)):
+    D = [[0] * len(A[0]) for n in range (len(A))]                       # Cria matriz D de zeros
+    L = [[0] * len(A[0]) for n in range (len(A))]                       # Cria matriz L de zeros
+    for n in range (len(A)):                                            # Faz valores da diagonal de L igual 1
         L[n][n] = 1
 
-    for j in range (len(A)):
+    for j in range (len(A)):                                            # Decomposição da matriz A em LDLt
         for i in range (j):
             h = A[j][i]
             L[j][i] = h/D[i][i]
@@ -310,44 +306,44 @@ def decompoe_A_matriz(A):
                 A[j][k] = A[j][k] - h*L[k][i]
         D[j][j] = A[j][j]
     
-    return (D, L)
+    return D, L
 
 
-def resolve_x_matriz(A, b):
+def resolve_x_matriz(A, b):                                             # Resolve sistema normal com A simétrica
     
-    D, L = decompoe_A_matriz(A)
+    D, L = decompoe_A_matriz(A)                                         # Faz a decomposição LDLt
     
     z = [0] * len(A)
     c = [0] * len(A)
-    for j in range(len(A)):
+    for j in range(len(A)):                                             # Resolve primeiro sistema
         z[j] = b[j]
         for i in range (j):
             z[j] = z[j] - L[j][i]*z[i]
         c[j] = z[j]/D[j][j]
 
     x = [0] * len(A)
-    for j in range (len(A)-1, -1, -1):
+    for j in range (len(A)-1, -1, -1):                                  # Resolve segundo sistema
         x[j] = c[j]
         for i in range (j+1, len(A)):
             x[j] = x[j] - L[i][j]*x[i]
     
-    return (x)
+    return x
 
 
-def erro_quad(delta_x, dict_p_u, uT, ak):
+def erro_quad(delta_x, dict_p_u, uT, ak):                               # Calcula o erro quadrático de um teste
     
     somatorio = 0
     for i in range(len(uT)):
         fonte = 0
-        for k, ui in enumerate(dict_p_u):
+        for k, ui in enumerate(dict_p_u):                               # Resolve a fórmula dada no enunciado
             fonte += ak[k]*dict_p_u[ui][i]
         somatorio += (uT[i] - fonte)**2
     
     return math.sqrt(delta_x*somatorio)
 
 
-def monta_plot(u_kTxi_all, uT):
-    
+def monta_plot(u_kTxi_all, uT):                                         # Funçao para calcular a estimativa com ak
+                                                                        # e retornar o valor de uT aproximado
     plot_aprox = []
     for i in range(len(uT)):
         ux = 0
@@ -357,29 +353,29 @@ def monta_plot(u_kTxi_all, uT):
     return plot_aprox
 
 
-def implementa_ep2(escolha, delta_x, N, u0_c, g1_c, g2_c, f_p):
+def implementa_ep2(escolha, delta_x, N, u0_c, g1_c, g2_c, f_p):         # Função que chama as outras, executa o EP2
 
-    p_list, uT_c = escolhe_p(escolha)
-    u_kTxi_all = {}
-    global p
-    for p in p_list:
+    p_list, uT_c = escolhe_p(escolha)                                   # Primeiramente escolhe os valores de p
+    u_kTxi_all = {}                                                     # de acordo com a escolha do teste
+    global p                                                            # para que o 'p' vire variável global
+    for p in p_list:                                                    # Calcula Crank para todos os 'p' da lista
             u_kTxi = crank(delta_x, N, u0_c, g1_c, g2_c, f_p)[-1]
             u_kTxi.pop(0)
             u_kTxi.pop()
             u_kTxi_all[p] = u_kTxi
-    if escolha == 'a': uT = 7*np.array(u_kTxi_all[p_list[0]])
+    if escolha == 'a': uT = 7*np.array(u_kTxi_all[p_list[0]])           # Função dada, igual na letra 'b'
     elif escolha == 'b': uT = 2.3*np.array(u_kTxi_all[p_list[0]]) + 3.7*np.array(u_kTxi_all[p_list[1]]) \
                         + 0.3*np.array(u_kTxi_all[p_list[2]]) + 4.2*np.array(u_kTxi_all[p_list[3]])
     elif escolha == 'c': uT = uT_c
-    else: uT = [elem*(1+((random.random() - 0.5)*2)*0.01) for elem in uT_c]
-    sist, sol = monta_sistema_min_qua(u_kTxi_all, uT)
-    ak = resolve_x_matriz(sist, sol)
-    E2 = erro_quad(delta_x, u_kTxi_all, uT, ak)
+    else: uT = [elem*(1+((random.random() - 0.5)*2)*0.01) for elem in uT_c]    # Adiciona o fator alatório do teste 'd'
+    sist, sol = monta_sistema_min_qua(u_kTxi_all, uT)                   # Monta o sistema dos minimos quadrados
+    ak = resolve_x_matriz(sist, sol)                                    # Resolve o sistema e retorna lista de intensidades
+    E2 = erro_quad(delta_x, u_kTxi_all, uT, ak)                         # Com a lista de intensidades, calcula o erro (E2)
     
     return ak, E2, u_kTxi_all, uT
 
 
-def plot_graf2d(x, y, title, xlabel='N', ylabel='Erro Máximo'):
+def plot_graf2d(x, y, title, xlabel='N', ylabel='Erro Máximo'):         # Função do EP1 (usada para plotar resultados no EP2)
     
     plt.plot(x, y)
     plt.xlabel(xlabel)
@@ -388,7 +384,7 @@ def plot_graf2d(x, y, title, xlabel='N', ylabel='Erro Máximo'):
     plt.show()
 
 
-def plot_graf3d(u, T, N, M, lamb):   # função responsável por plotar os gráficos 3D de Posição x Tempo x Temperatura
+def plot_graf3d(u, T, N, M, lamb):                                      # Função do EP1
     
     x = np.linspace(0, 1, (N+1))
     t = np.linspace(0, T, (M+1))
@@ -405,26 +401,26 @@ def plot_graf3d(u, T, N, M, lamb):   # função responsável por plotar os gráf
     plt.show()
 
 
-def print_line(lenght=50):   # função para a estética do cabeçalho, não importante
+def print_line(lenght=50):                                              # Função para a estética do cabeçalho, não importante
     print('=' *lenght)
 
-def print_title(title, lenght=50):   # função para a estética do cabeçalho, não importante
+def print_title(title, lenght=50):                                      # Função para a estética do cabeçalho, não importante
     size = len(title)
     final = (' ' *((lenght-size)//2)) + title + (' ' *((lenght-size)//2))
     print(final)
 
-def header (title):   # função para a estética do cabeçalho, não importante
+def header (title):                                                      # Função para a estética do cabeçalho, não importante
     print_line()
     print_title(title)
     print_line()
 
-def menu (option_list, start=1):    # função para a estética do cabeçalho, não importante
+def menu (option_list, start=1):                                        # Função para a estética do cabeçalho, não importante
     for a in range (len(option_list)):
         print(f'{a+start} -- {option_list[a]}')
 
 
 
-if __name__ == "__main__":   # interface do programa, permite a realização de qualquer um dos testes requiescolhaaados do EP
+if __name__ == "__main__":                                              # Interface do programa
 
     print("Exercício Programa 2 - MAP3121")
     print("Autoria:    Mariana Nakamoto - 10769793")
@@ -443,7 +439,7 @@ if __name__ == "__main__":   # interface do programa, permite a realização de 
     header("TESTE PARA O EP2 --- 10")
     menu(["Calcular as intensidades ak das fontes, e o erro quadrático E2\n"], start=10)
     
-    while True:   # programa insiste que o usuário digite um número válido, sem parar de rodar o programa
+    while True:                             # programa insiste que o usuário digite um número válido, sem parar de rodar o programa
         try:
             teste = int(input("Qual teste deseja realizar? "))
             N_max = int(input("Digite o N a ser utilizado no teste: "))
@@ -454,7 +450,7 @@ if __name__ == "__main__":   # interface do programa, permite a realização de 
 
     
     T = 1
-    u0_a = lambda x: x**2*(1 - x)**2
+    u0_a = lambda x: x**2*(1 - x)**2                                    # Todas funções do EP1, menos a última (f_p)
     g1_a = lambda t: 0
     g2_a = lambda t: 0
     f_a = lambda t, x: 10*math.cos(10*t)*(x**2)*(1 - x)**2 - (1 + math.sin(10*t)) * (12*(x**2) - 12*x + 2)
@@ -470,9 +466,9 @@ if __name__ == "__main__":   # interface do programa, permite a realização de 
     f_p = lambda t, x: 10*(1 + math.cos(5*t)) * (1/delta_x) \
                        if x >= (p - delta_x/2) and x <= (p + delta_x/2) else 0
     
-    inf = {'a': [u0_a, g1_a, g2_a, f_a], 'b': [u0_b, g1_b, g2_b, f_b], 'c': [u0_c, g1_c, g2_c, f_c]}
+    inf = {'a': [u0_a, g1_a, g2_a, f_a], 'b': [u0_b, g1_b, g2_b, f_b], 'c': [u0_c, g1_c, g2_c, f_c]}  # Dados para cada letra (EP1)
     
-    if teste <= 3:
+    if teste <= 3:                                                      # Testes do EP1
         lamb = float(input("Digite o Lambda a ser utilizado no teste: "))
         
         if not teste == 3:
@@ -503,7 +499,7 @@ if __name__ == "__main__":   # interface do programa, permite a realização de 
             u_aprox = sol_aprox_u(delta_x, delta_t, N, M, *inf['c'])
             plot_graf3d(u_aprox, T, N, M, lamb)
     
-    elif teste > 3 and teste <= 9:
+    elif teste > 3 and teste <= 9:                                      # Testes do EP1
         if not (teste == 6 or teste == 9):
             N = 10
             Ni = []
@@ -537,19 +533,22 @@ if __name__ == "__main__":   # interface do programa, permite a realização de 
             else: metodo = crank
             u_aprox = metodo(delta_x, N, *inf['c'])
             plot_graf3d(u_aprox, T, N, M, lamb)
+
+#    ----------------------------------------- INTERFACE DO EP2 COMEÇA AQUI ---------------------------------------------
+
     else:
-        N = N_max
+        N = N_max                                                       # Variáveis definidas para Crank-Nicolson
         delta_x = 1/N_max
         delta_t = delta_x
         M = N_max
         lamb = N_max
-        escolha = str(input('Caso (a, b, c, d) a ser rodado: ')).lower()
-        ak, E2, u_kTxi_all, uT = implementa_ep2(escolha, delta_x, N, u0_c, g1_c, g2_c, f_p)
-        for i, a in enumerate(ak):
+        escolha = str(input('Caso (a, b, c, d) a ser rodado: ')).lower()    # Pergunta a escolha ao usuário
+        ak, E2, u_kTxi_all, uT = implementa_ep2(escolha, delta_x, N, u0_c, g1_c, g2_c, f_p)    # RODA TODOS OS TESTES
+        for i, a in enumerate(ak):                                          # Imprime os ak de forma organizada
             print(f'a{i+1}: {a}')
-        print(f'Erro quadrático do teste: {E2}')
-        plot_aprox = monta_plot(u_kTxi_all, uT)
-        plot_graf2d(np.linspace(0, 1, (len(plot_aprox))), np.array(plot_aprox),
+        print(f'Erro quadrático do teste: {E2}')                            # Imprime o erro quadrático
+        plot_aprox = monta_plot(u_kTxi_all, uT)                             # Prepada o vetor aproximado para o plot
+        plot_graf2d(np.linspace(0, 1, (len(plot_aprox))), np.array(plot_aprox),         # Plota o vetor calculado
                     'Resultado Aproximado', xlabel='Posição', ylabel='Temperatura')
-        plot_graf2d(np.linspace(0, 1, (len(uT))), np.array(uT),
+        plot_graf2d(np.linspace(0, 1, (len(uT))), np.array(uT),                         # Plota o vetor real, dado
                     'Resultado Real', xlabel='Posição', ylabel='Temperatura')
