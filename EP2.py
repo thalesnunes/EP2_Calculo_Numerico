@@ -371,7 +371,7 @@ def implementa_ep2(escolha, delta_x, N, u0_c, g1_c, g2_c, f_p):         # Fun√ß√
     sist, sol = monta_sistema_min_qua(u_kTxi_all, uT)                   # Monta o sistema dos minimos quadrados
     ak = resolve_x_matriz(sist, sol)                                    # Resolve o sistema e retorna lista de intensidades
     E2 = erro_quad(delta_x, u_kTxi_all, uT, ak)                         # Com a lista de intensidades, calcula o erro (E2)
-    
+
     return ak, E2, u_kTxi_all, uT
 
 
