@@ -17,3 +17,6 @@ Passos para rodar o programa:
 do problema inverso para os parâmetros escolhidos, e imprimir
 os valores de ak, E2 e plotar os gráficos de distribuição
 final para o resultado real e aproximado.
+
+OBS: Para os testes c) e d) é necessário que o arquivo 'teste.txt'
+esteja na mesma pasta que o arquivo 'EP2_FINAL.py'.
